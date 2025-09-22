@@ -10,9 +10,11 @@
     "sanity": "sanity dev",
     "sanity:build": "sanity build",
     "sanity:deploy": "sanity deploy",
-    "migrate": "node scripts/migrate-content.js"
+    "migrate": "node scripts/migrate-content.js",
+    "netlify:build": "npm run build"
   },
   "dependencies": {
+    "@netlify/plugin-nextjs": "^5.13.3",
     "@sanity/client": "^7.11.2",
     "@sanity/image-url": "^1.2.0",
     "@sanity/vision": "^4.9.0",

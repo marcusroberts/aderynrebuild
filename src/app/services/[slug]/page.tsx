@@ -26,6 +26,32 @@ async function getService(slug: string) {
   }
 }
 
+// Generate static params for all services
+export async function generateStaticParams() {
+  try {
+    // For static export, we'll define the known service slugs
+    // In a real deployment, you'd fetch these from Sanity
+    return [
+      { slug: 'due-diligence-building-surveys' },
+      { slug: 'vendor-surveys' },
+      { slug: 'planned-preventative-maintenance-surveys' },
+      { slug: 'building-pathology-defect-diagnosis' },
+      { slug: 'dilapidations' },
+      { slug: 'licence-to-alter' },
+      { slug: 'feasibility-studies' },
+      { slug: 'reinstatement-cost-assessments' },
+      { slug: 'schedules-of-condition' },
+      { slug: 'contract-administration' },
+      { slug: 'project-management' },
+      { slug: 'cdm-2015' },
+      { slug: 'exit-strategies' },
+    ];
+  } catch (error) {
+    console.error('Error generating static params:', error);
+    return [];
+  }
+}
+
 async function getRelatedServices(category: string, currentId: string) {
   try {
     const query = `*[_type == "service" && category == $category && _id != $currentId] | order(order asc)[0...3]{
@@ -46,15 +72,73 @@ export async function generateMetadata({ params }: ServicePageProps): Promise<Me
   const { slug } = await params;
   const service = await getService(slug);
 
-  if (!service) {
+  // Fallback metadata
+  const fallbackServices = {
+    'due-diligence-building-surveys': {
+      title: 'Due Diligence Building Surveys',
+      description: 'Comprehensive building surveys for property acquisition and investment decisions.',
+    },
+    'vendor-surveys': {
+      title: 'Vendor Surveys',
+      description: 'Pre-sale property surveys to identify and address potential issues before marketing.',
+    },
+    'planned-preventative-maintenance-surveys': {
+      title: 'Planned Preventative Maintenance Surveys',
+      description: 'Strategic maintenance planning to preserve property value and prevent costly repairs.',
+    },
+    'building-pathology-defect-diagnosis': {
+      title: 'Building Pathology / Defect Diagnosis',
+      description: 'Expert diagnosis of building defects and pathology issues.',
+    },
+    'dilapidations': {
+      title: 'Dilapidations',
+      description: 'Expert dilapidations advice for landlords and tenants.',
+    },
+    'licence-to-alter': {
+      title: 'Licence to Alter',
+      description: 'Licence to alter applications and approvals for tenant improvements.',
+    },
+    'feasibility-studies': {
+      title: 'Feasibility Studies',
+      description: 'Comprehensive feasibility assessments for development projects.',
+    },
+    'reinstatement-cost-assessments': {
+      title: 'Reinstatement Cost Assessments',
+      description: 'Professional reinstatement cost assessments for insurance purposes.',
+    },
+    'schedules-of-condition': {
+      title: 'Schedules of Condition',
+      description: 'Detailed schedules of condition for property documentation.',
+    },
+    'contract-administration': {
+      title: 'Contract Administration',
+      description: 'Professional contract administration services for construction projects.',
+    },
+    'project-management': {
+      title: 'Project Management',
+      description: 'Comprehensive project management for construction and development projects.',
+    },
+    'cdm-2015': {
+      title: 'CDM 2015',
+      description: 'Construction Design and Management Regulations 2015 compliance services.',
+    },
+    'exit-strategies': {
+      title: 'Exit Strategies',
+      description: 'Strategic exit planning and implementation for property investments.',
+    }
+  };
+
+  const serviceData = service || fallbackServices[slug as keyof typeof fallbackServices];
+
+  if (!serviceData) {
     return {
       title: 'Service Not Found',
     };
   }
 
   return {
-    title: service.seo?.metaTitle || `${service.title} - Aderyn Building Consultancy`,
-    description: service.seo?.metaDescription || service.description || `${service.title} services from Aderyn Building Consultancy`,
+    title: service?.seo?.metaTitle || `${serviceData.title} - Aderyn Building Consultancy`,
+    description: service?.seo?.metaDescription || serviceData.description || `${serviceData.title} services from Aderyn Building Consultancy`,
   };
 }
 
@@ -62,28 +146,98 @@ export default async function ServicePage({ params }: ServicePageProps) {
   const { slug } = await params;
   const service = await getService(slug);
 
-  if (!service) {
+  // Fallback content for when Sanity data is not available
+  const fallbackServices = {
+    'due-diligence-building-surveys': {
+      title: 'Due Diligence Building Surveys',
+      description: 'Comprehensive building surveys for property acquisition and investment decisions.',
+      category: 'building-surveys'
+    },
+    'vendor-surveys': {
+      title: 'Vendor Surveys',
+      description: 'Pre-sale property surveys to identify and address potential issues before marketing.',
+      category: 'building-surveys'
+    },
+    'planned-preventative-maintenance-surveys': {
+      title: 'Planned Preventative Maintenance Surveys',
+      description: 'Strategic maintenance planning to preserve property value and prevent costly repairs.',
+      category: 'building-surveys'
+    },
+    'building-pathology-defect-diagnosis': {
+      title: 'Building Pathology / Defect Diagnosis',
+      description: 'Expert diagnosis of building defects and pathology issues.',
+      category: 'building-surveys'
+    },
+    'dilapidations': {
+      title: 'Dilapidations',
+      description: 'Expert dilapidations advice for landlords and tenants.',
+      category: 'landlord-tenant'
+    },
+    'licence-to-alter': {
+      title: 'Licence to Alter',
+      description: 'Licence to alter applications and approvals for tenant improvements.',
+      category: 'landlord-tenant'
+    },
+    'feasibility-studies': {
+      title: 'Feasibility Studies',
+      description: 'Comprehensive feasibility assessments for development projects.',
+      category: 'landlord-tenant'
+    },
+    'reinstatement-cost-assessments': {
+      title: 'Reinstatement Cost Assessments',
+      description: 'Professional reinstatement cost assessments for insurance purposes.',
+      category: 'landlord-tenant'
+    },
+    'schedules-of-condition': {
+      title: 'Schedules of Condition',
+      description: 'Detailed schedules of condition for property documentation.',
+      category: 'landlord-tenant'
+    },
+    'contract-administration': {
+      title: 'Contract Administration',
+      description: 'Professional contract administration services for construction projects.',
+      category: 'project-delivery'
+    },
+    'project-management': {
+      title: 'Project Management',
+      description: 'Comprehensive project management for construction and development projects.',
+      category: 'project-delivery'
+    },
+    'cdm-2015': {
+      title: 'CDM 2015',
+      description: 'Construction Design and Management Regulations 2015 compliance services.',
+      category: 'project-delivery'
+    },
+    'exit-strategies': {
+      title: 'Exit Strategies',
+      description: 'Strategic exit planning and implementation for property investments.',
+      category: 'professional-services'
+    }
+  };
+
+  // Use Sanity data if available, otherwise use fallback
+  const serviceData = service || fallbackServices[slug as keyof typeof fallbackServices];
+
+  if (!serviceData) {
     notFound();
   }
 
-  const relatedServices = await getRelatedServices(service.category, service._id);
+  const relatedServices = service ? await getRelatedServices(service.category, service._id) : [];
 
   return (
     <div>
-      <PageHeader 
-        title={service.title} 
-        description={service.description}
+      <PageHeader
+        title={serviceData.title}
+        description={serviceData.description}
       />
-      
+
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {service.content && (
+        {service?.content ? (
           <PortableText value={service.content} />
-        )}
-        
-        {!service.content && service.description && (
+        ) : (
           <div className="prose prose-lg max-w-none">
             <p className="text-gray-700 leading-relaxed">
-              {service.description}
+              {serviceData.description}
             </p>
           </div>
         )}
@@ -127,7 +281,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
       <div className="bg-blue-600 py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl font-bold text-white mb-4">
-            Need Help with {service.title}?
+            Need Help with {serviceData.title}?
           </h2>
           <p className="text-xl text-blue-100 mb-8">
             Contact our experienced team for professional advice and support.

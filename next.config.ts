@@ -11,6 +11,11 @@ const nextConfig: NextConfig = {
     // your project has type errors.
     ignoreBuildErrors: true,
   },
+  // Netlify deployment configuration
+  trailingSlash: false,
+  images: {
+    domains: ['cdn.sanity.io'],
+  },
 };
 
 export default nextConfig;

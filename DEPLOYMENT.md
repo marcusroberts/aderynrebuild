@@ -136,11 +136,51 @@ npm run migrate
 
 ### 5.1 Netlify
 
-1. Connect your GitHub repository
-2. Build settings:
+#### Option A: Deploy via GitHub (Recommended)
+
+1. **Push to GitHub**:
+   ```bash
+   git add .
+   git commit -m "Add Netlify configuration"
+   git push origin main
+   ```
+
+2. **Connect to Netlify**:
+   - Go to [netlify.com](https://netlify.com)
+   - Click "New site from Git"
+   - Connect your GitHub repository
+   - Netlify will auto-detect the Next.js configuration
+
+3. **Configure Build Settings** (if not auto-detected):
    - Build command: `npm run build`
    - Publish directory: `.next`
-3. Add environment variables in Site Settings
+   - Node version: `18`
+
+4. **Add Environment Variables**:
+   Go to Site Settings → Environment Variables and add:
+   ```
+   NEXT_PUBLIC_SANITY_PROJECT_ID=tbyyj269
+   NEXT_PUBLIC_SANITY_DATASET=migrated1
+   SANITY_API_TOKEN=your_api_token_here
+   ```
+
+5. **Deploy**:
+   Click "Deploy site" and wait for the build to complete.
+
+#### Option B: Deploy via Netlify CLI
+
+1. **Install Netlify CLI**:
+   ```bash
+   npm install -g netlify-cli
+   ```
+
+2. **Login and Deploy**:
+   ```bash
+   cd aderyn-cms
+   netlify login
+   netlify init
+   netlify deploy --prod
+   ```
 
 ### 5.2 Railway
 
